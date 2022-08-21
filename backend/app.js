@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const { login, setUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const error = require('./middlewares/error');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const NotFoundError = require('./errors/not-found-error');
 
 const { PORT = 3000 } = process.env;
@@ -15,6 +16,14 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 mongoose.connect('mongodb://localhost:27017/mestodb', {});
+
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -38,6 +47,9 @@ app.use('/cards', auth, require('./routes/cards'));
 app.use('/*', () => {
   throw new NotFoundError('К сожалению, запрашиваемая страница не найдена.');
 });
+
+app.use(errorLogger);
+
 app.use(errors());
 
 app.use(error);
