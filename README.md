@@ -5,3 +5,4 @@
 
 * IP: 62.84.122.92
 * URL: https://mesto.alexeyitm.nomoredomains.sbs/
+* Домен сервера: api.mesto.alexeyitm.nomoredomains.sbs

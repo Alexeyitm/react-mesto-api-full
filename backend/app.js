@@ -33,7 +33,7 @@ app.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-  }).unknown(true),
+  }),
 }), login);
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -42,13 +42,17 @@ app.post('/signup', celebrate({
     avatar: Joi.string().regex(/^http(s)?:\/\/(www.)?([\w-]+\.)+\/?\S*$/),
     email: Joi.string().required().email(),
     password: Joi.string().required(),
-  }).unknown(true),
+  }),
 }), setUser);
+
+app.get('/signout', (req, res) => {
+  res.clearCookie('jwt').send({ message: 'Выход' });
+});
 
 app.use('/users', auth, require('./routes/users'));
 app.use('/cards', auth, require('./routes/cards'));
 
-app.use('/*', () => {
+app.use('/*', auth, () => {
   throw new NotFoundError('К сожалению, запрашиваемая страница не найдена.');
 });
 

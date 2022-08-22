@@ -1,0 +1,21 @@
+.header__menu {
+  display: none;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  margin-right: 30px;
+  background: inherit;
+  cursor: pointer;
+  transition: all .5s ease-in-out;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 540px) {
+  .header__menu {
+    display: flex;
+  }
+}
