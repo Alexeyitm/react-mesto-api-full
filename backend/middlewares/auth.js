@@ -2,6 +2,8 @@
 const jwt = require('jsonwebtoken');
 const LoginDataError = require('../errors/login-data-error');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 module.exports = (req, res, next) => {
   if (!req.cookies.jwt) {
     throw new LoginDataError('Необходима авторизация!');
@@ -9,7 +11,7 @@ module.exports = (req, res, next) => {
   const token = req.cookies.jwt;
   let payload;
   try {
-    payload = jwt.verify(token, 'some-secret-key');
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
   } catch (err) {
     throw new LoginDataError('Необходима авторизация!');
   }
