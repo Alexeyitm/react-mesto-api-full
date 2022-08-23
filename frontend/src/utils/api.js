@@ -38,6 +38,7 @@ class Api {
       })
     })
     .then(res => this._getJSON(res))
+    .then(res => console.log(res))
   };
 
   setCard(card) {
