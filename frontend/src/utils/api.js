@@ -87,11 +87,11 @@ class Api {
     }
   };
 }
+const jwt = localStorage.getItem('jwt');
 
 export const api = new Api({
   baseUrl: 'https://api.mesto.alexeyitm.nomoredomains.sbs',
   headers: {
-    // eslint-disable-next-line no-undef
     'Authorization': `Bearer ${jwt}`,
   }
 });
