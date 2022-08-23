@@ -6,7 +6,7 @@ const NotFoundError = require('../errors/not-found-error');
 const SendIncorrectDataError = require('../errors/send-incorrect-data-error');
 const UserFoundError = require('../errors/user-found-error');
 
-const { JWT_SECRET = 'dev-key' } = process.env;
+const { NODE_ENV, JWT_SECRET = 'dev-key' } = process.env;
 
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
@@ -14,16 +14,10 @@ module.exports.login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        JWT_SECRET,
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-key',
         { expiresIn: '7d' },
       );
-      res
-        .cookie('jwt', token, {
-          maxAge: (7 * 24 * 60 * 60),
-          httpOnly: true,
-        })
-        .send({ message: 'Авторизация прошла успешно!' })
-        .end();
+      res.send({ token });
     })
     .catch(next);
 };
