@@ -40,7 +40,7 @@ function Main({ cards, onEditAvatar, onEditProfile, onAddPlace, onCardLike, hand
       <section className='elements'>
         <ul className='elements__list'>
           {
-            cards.map(function(card) {              
+            Array.from(cards).map(function(card) {              
               return (<Card 
                 card={card}
                 key={card._id}

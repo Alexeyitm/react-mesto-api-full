@@ -87,6 +87,7 @@ class Api {
     }
   };
 }
+
 const jwt = localStorage.getItem('jwt');
 
 export const api = new Api({
