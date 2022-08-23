@@ -94,6 +94,7 @@ const jwt = localStorage.getItem('jwt');
 export const api = new Api({
   baseUrl: 'https://api.mesto.alexeyitm.nomoredomains.sbs',
   headers: {
+    'Content-Type': 'application/json',
     'Authorization': `Bearer ${jwt}`,
   }
 });
