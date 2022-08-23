@@ -91,6 +91,7 @@ class Api {
 export const api = new Api({
   baseUrl: 'https://api.mesto.alexeyitm.nomoredomains.sbs',
   headers: {
-    'Content-Type': 'application/json'
+    // eslint-disable-next-line no-undef
+    'Authorization': `Bearer ${jwt}`,
   }
 });
