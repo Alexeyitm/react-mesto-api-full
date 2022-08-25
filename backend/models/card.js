@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { regex } = require('../regex');
 
 const cardSchema = new mongoose.Schema(
   {
@@ -12,7 +13,7 @@ const cardSchema = new mongoose.Schema(
       type: String,
       validate: {
         validator(v) {
-          return /^http(s)?:\/\/(www.)?([\w-]+\.)+\/?\S*$/.test(v);
+          return regex.test(v);
         },
       },
       required: true,
