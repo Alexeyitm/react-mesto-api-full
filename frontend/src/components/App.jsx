@@ -37,8 +37,6 @@ function App() {
 
   const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link || isInfoPopupOpen
 
-  console.log(loggedIn)
-
   const handleRegistration = (data) => {
     auth
       .registration(data)
