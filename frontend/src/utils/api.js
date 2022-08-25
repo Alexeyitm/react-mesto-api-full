@@ -10,11 +10,19 @@ class Api {
       return Promise.reject(`Ошибка: ${res.status}`);
     }
   };
+
+  _getHeaders() {
+    const jwt = localStorage.getItem('jwt');
+    return {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${jwt}`
+    };
+  }
   
   getUser() {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'GET',
-      headers: this._headers
+      headers: this._getHeaders()
     })
     .then(res => this._getJSON(res))
     .then(res => res.data)
@@ -23,7 +31,7 @@ class Api {
   getCards() {
     return fetch(`${this._baseUrl}/cards`, {
       method: 'GET',
-      headers: this._headers
+      headers: this._getHeaders()
     })
     .then(res => this._getJSON(res))
     .then(res => res.data)
@@ -32,7 +40,7 @@ class Api {
   setUser(user) {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: this._getHeaders(),
       body: JSON.stringify({
         name: user.name,
         about: user.about
@@ -45,7 +53,7 @@ class Api {
   setCard(card) {
     return fetch(`${this._baseUrl}/cards`, {
       method: 'POST',
-      headers: this._headers,
+      headers: this._getHeaders(),
       body: JSON.stringify({
         name: card.place,
         link: card.link,
@@ -58,7 +66,7 @@ class Api {
   deleteCard(id) {
     return fetch(`${this._baseUrl}/cards/${id}`, {
       method: 'DELETE',
-      headers: this._headers
+      headers: this._getHeaders()
     })
     .then(res => this._getJSON(res))
   };
@@ -66,7 +74,7 @@ class Api {
   setAvatar(picture) {
     return fetch(`${this._baseUrl}/users/me/avatar`, {
       method: 'PATCH',
-      headers: this._headers,
+      headers: this._getHeaders(),
       body: JSON.stringify({
         avatar: picture.link
       })
@@ -79,14 +87,14 @@ class Api {
     if (isLiked) {
       return fetch(`${this._baseUrl}/cards/${id}/likes`, {
         method: 'DELETE',
-        headers: this._headers
+        headers: this._getHeaders()
       })
       .then(res => this._getJSON(res))
       .then(res => res.data)
     } else {
       return fetch(`${this._baseUrl}/cards/${id}/likes`, {
         method: 'PUT',
-        headers: this._headers
+        headers: this._getHeaders()
       })
       .then(res => this._getJSON(res))
       .then(res => res.data)
@@ -94,12 +102,6 @@ class Api {
   };
 }
 
-const jwt = localStorage.getItem('jwt');
-
 export const api = new Api({
   baseUrl: 'https://api.mesto.alexeyitm.nomoredomains.sbs',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${jwt}`,
-  }
 });

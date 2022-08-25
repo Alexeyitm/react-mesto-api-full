@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { Switch, Route, Redirect, useHistory } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
@@ -35,14 +35,89 @@ function App() {
   const [userEmail, setIsUserEmail] = useState('');
   const [isOpenBurgerMenu, setIsOpenBurgerMenu] = useState(false);
 
+  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link || isInfoPopupOpen
+
+  console.log(loggedIn)
+
+  const handleRegistration = (data) => {
+    auth
+      .registration(data)
+      .then((res) => {
+        if (res) {
+          history.push('/sign-in');
+          setIsRegistration(true);
+        } else {
+          setIsRegistration(false);
+        }
+      })
+      .finally(() => setIsInfoPopup(true))
+      .catch((err) => {
+        console.log(err);
+        setIsRegistration(false);
+      })
+  }
+  
+  const handleAuthorization = (data) => {
+    auth
+      .authorization(data)
+      .then((res) => {
+        if (res) {
+          setIsUserEmail(res.email);
+          localStorage.setItem('jwt', res.token);
+          setIsLoggedIn(true);
+          history.push('/');
+        }
+      })
+      .catch(err => {
+        console.log(err);
+        setIsInfoPopup(true);
+      })
+  }
+
+  const handleSignOut = () => {
+    localStorage.removeItem('jwt');
+    setIsLoggedIn(false);
+  }
+
   useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    if (jwt) {
+      auth
+        .checkToken(jwt)
+          .then((res) => {
+            if (res) {
+              setIsLoggedIn(true);
+              history.push('/');
+            }
+          })
+          .catch((err) => console.log(err))
+    }
+  }, [history])
+
+  useEffect(() => {
+    if (loggedIn) {
     Promise.all([api.getUser(), api.getCards()])
       .then(([user, items]) => {
         setUser(user);
         setCards(items);
       })
       .catch((err) => console.log(err));
-  }, []);
+    }
+  }, [loggedIn]);
+
+  useEffect(() => {
+    function closeByEscape(e) {
+      if (e.key === 'Escape') {
+        closeAllPopups();
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('keydown', closeByEscape);
+      return () => {
+        document.removeEventListener('keydown', closeByEscape);
+      }
+    }
+  }, [isOpen]);
 
   const handleClickEditAvatar = () => {
     setIsAvatarPopup(true);
@@ -79,22 +154,6 @@ function App() {
       setIsSaving(false);
     }, 500);
   }
-
-  const isOpen = isEditAvatarPopupOpen || isEditProfilePopupOpen || isAddPlacePopupOpen || selectedCard.link || isInfoPopupOpen
-
-  useEffect(() => {
-    function closeByEscape(e) {
-      if(e.key === 'Escape') {
-        closeAllPopups();
-      }
-    }
-    if(isOpen) {
-      document.addEventListener('keydown', closeByEscape);
-      return () => {
-        document.removeEventListener('keydown', closeByEscape);
-      }
-    }
-  }, [isOpen]);
 
   const handleCardLike = (card) => {
     const isLiked = card.likes.some(i => i._id === currentUser.owner);
@@ -150,64 +209,6 @@ function App() {
         closeAllPopups();
       })
       .catch((err) => console.log(err))
-  }
-
-  const handleRegistration = (data) => {
-    auth
-      .registration(data)
-      .then((res) => {
-        if (res){
-          history.push('/sign-in');
-          setIsRegistration(true);
-        } else {
-          setIsRegistration(false);
-        }
-      })
-      .finally(() => setIsInfoPopup(true))
-      .catch((err) => {
-        console.log(err);
-        setIsRegistration(false);
-      })
-  }
-  
-  const handleAuthorization = (data) => {
-    auth
-      .authorization(data)
-      .then((res) => {
-        if (res){
-          localStorage.setItem('jwt', res.token);
-          setIsLoggedIn(true);
-          history.push('/');
-        }
-      })
-      .catch(err => {
-        console.log(err);
-        setIsInfoPopup(true);
-      })
-  }
-
-  const checkToken = useCallback(() => {
-    const jwt = localStorage.getItem('jwt');
-    if (jwt){
-      auth
-        .checkToken(jwt).then((res) => {
-          if (res){
-            setIsLoggedIn(true);
-            history.push('/');
-            setIsUserEmail(res.data.email)
-          }
-        })
-        .catch((err) => console.log(err))
-    }
-  }, [history])
-
-  useEffect(() => {
-    checkToken();
-  }, [checkToken])
-
-
-  const handleSignOut = () => {
-    localStorage.removeItem('jwt');
   }
 
   return (
