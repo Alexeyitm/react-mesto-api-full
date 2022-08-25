@@ -3,7 +3,7 @@ class Api {
     this._baseUrl = options.baseUrl;
     this._headers = options.headers;
 
-    this._getJSON = function (res) {
+    this._getJSON = function(res) {
       if (res.ok) {
         return res.json();
       }
@@ -17,6 +17,7 @@ class Api {
       headers: this._headers
     })
     .then(res => this._getJSON(res))
+    .then(res => res.data)
   };
 
   getCards() {
@@ -25,9 +26,9 @@ class Api {
       headers: this._headers
     })
     .then(res => this._getJSON(res))
+    .then(res => res.data)
   };
   
-
   setUser(user) {
     return fetch(`${this._baseUrl}/users/me`, {
       method: 'PATCH',
@@ -38,7 +39,7 @@ class Api {
       })
     })
     .then(res => this._getJSON(res))
-    .then(res => console.log(res))
+    .then(res => res.data)
   };
 
   setCard(card) {
@@ -51,6 +52,7 @@ class Api {
       })
     })
     .then(res => this._getJSON(res))
+    .then(res => res.data)
   };
 
   deleteCard(id) {
@@ -70,6 +72,7 @@ class Api {
       })
     })
     .then(res => this._getJSON(res))
+    .then(res => res.data)
   };
 
   toggleLike(id, isLiked) {
@@ -79,12 +82,14 @@ class Api {
         headers: this._headers
       })
       .then(res => this._getJSON(res))
+      .then(res => res.data)
     } else {
       return fetch(`${this._baseUrl}/cards/${id}/likes`, {
         method: 'PUT',
         headers: this._headers
       })
       .then(res => this._getJSON(res))
+      .then(res => res.data)
     }
   };
 }

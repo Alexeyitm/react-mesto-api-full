@@ -4,9 +4,9 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
-const { celebrate, Joi } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const { login, setUser } = require('./controllers/users');
+const { validateUser, validateAuth } = require('./middlewares/validation');
 const auth = require('./middlewares/auth');
 const error = require('./middlewares/error');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -30,21 +30,8 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), login);
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-    avatar: Joi.string().regex(/^http(s)?:\/\/(www.)?([\w-]+\.)+\/?\S*$/),
-    email: Joi.string().required().email(),
-    password: Joi.string().required(),
-  }),
-}), setUser);
+app.post('/signup', validateUser, setUser);
+app.post('/signin', validateAuth, login);
 
 app.get('/signout', (req, res) => {
   res.clearCookie('jwt').send({ message: 'Выход' });

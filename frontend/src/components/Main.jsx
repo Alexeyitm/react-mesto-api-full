@@ -40,14 +40,16 @@ function Main({ cards, onEditAvatar, onEditProfile, onAddPlace, onCardLike, hand
       <section className='elements'>
         <ul className='elements__list'>
           {
-            Array.from(cards).map(function(card) {              
-              return (<Card 
-                card={card}
-                key={card._id}
-                handleCardClick={handleCardClick}
-                onCardLike={onCardLike}
-                onCardDelete={onCardDelete}
-              />)
+            cards.map((card) => {           
+              return(
+                <Card 
+                  card={card}
+                  key={card._id}
+                  handleCardClick={handleCardClick}
+                  onCardLike={onCardLike}
+                  onCardDelete={onCardDelete}
+                />
+              )
             })
           }
         </ul>
