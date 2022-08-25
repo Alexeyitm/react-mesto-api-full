@@ -180,7 +180,10 @@ function App() {
           history.push('/');
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err);
+        setIsInfoPopup(true);
+      })
   }
 
   const checkToken = useCallback(() => {
